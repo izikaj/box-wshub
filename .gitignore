@@ -1,0 +1,8 @@
+/tmp
+!/tmp/.keep
+/public/cache
+.byebug_history
+/db/database.db
+/public/cover
+/public/uploads
+node_modules

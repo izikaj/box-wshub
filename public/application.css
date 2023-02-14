@@ -1,0 +1,30 @@
+html,
+body {
+  background: #111;
+  color: beige;
+}
+
+h1 {
+  font-size: 1.4rem;
+}
+
+#list {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+#list p {
+  border: 1px solid gray;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+#list .title {
+  border-bottom: 1px solid gray;
+  display: block;
+  padding-bottom: 4px;
+}
+
+#list pre {
+  padding-top: 4px;
+}
