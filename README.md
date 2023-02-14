@@ -12,22 +12,25 @@ npm start
 
 # Usage
 
-## send json message to `/notify` endpoint via POST
+## send json message to `/` endpoint via POST
 
 ```
-  curl -X POST http://localhost:8988/notify
+  curl -X POST http://localhost:8988/
        -H 'Content-Type: application/json'
        -d '{"type":"some","message":"todo"}'
 ```
 
-## connect to `/ws` endpoint as websocket connection to listen updates
+## connect to `/` endpoint as websocket connection to listen updates
 
 ```javascript
-const sock = new WebSocket('ws://localhost:8988/ws');
+const sock = new WebSocket('ws://localhost:8988/');
 sock.onmessage = (evt) => { console.log('MESSAGE:', JSON.parse(evt.data)); }
 ```
 
-# Create background system service
+## development sandbox
+open [sandbox page](http://localhost:8988) & play
+
+## Create background system service
 
 Create `wshub` service
 ```sh
@@ -78,4 +81,19 @@ sudo service wshub restart
 # in some cases you need to reload daemon
 sudo systemctl daemon-reload
 sudo systemctl service wshub.service enable
+```
+
+## add proxy to nginx config
+```
+  location /system/cable/ {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+
+    proxy_pass http://127.0.0.1:8988/;
+
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+  }
 ```

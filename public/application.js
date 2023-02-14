@@ -15,7 +15,7 @@ function $$error(error) {
 }
 
 function connect() {
-  const socket = new WebSocket('ws://localhost:8080/ws');
+  const socket = new WebSocket(`ws://${location.host}${location.pathname}`);
   socket.onopen = $$open;
   socket.onmessage = (event) => {
     try {
@@ -46,4 +46,12 @@ if (node) {
     $$onMessage.call(this, data);
   }
   connect();
+}
+
+window.$send = (message) => {
+  return fetch(`//${location.host}${location.pathname}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(message)
+  }).then(response => response.json());
 }
