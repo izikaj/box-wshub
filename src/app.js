@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const expressWs = require('express-ws')(app);
 const jsonParser = require('body-parser').json();
-const port = 8080;
+const port = 8988;
 
 app.use(express.static('public'));
 

@@ -15,7 +15,7 @@ npm start
 ## send json message to `/notify` endpoint via POST
 
 ```
-  curl -X POST http://localhost:8080/notify
+  curl -X POST http://localhost:8988/notify
        -H 'Content-Type: application/json'
        -d '{"type":"some","message":"todo"}'
 ```
@@ -23,7 +23,7 @@ npm start
 ## connect to `/ws` endpoint as websocket connection to listen updates
 
 ```javascript
-const sock = new WebSocket('ws://localhost:8080/ws');
+const sock = new WebSocket('ws://localhost:8988/ws');
 sock.onmessage = (evt) => { console.log('MESSAGE:', JSON.parse(evt.data)); }
 ```
 
@@ -46,7 +46,7 @@ User=kenny
 WorkingDirectory=/www/wshub
 Environment=NODE_ENV=production
 
-ExecStart=/usr/local/bin/npm start
+ExecStart=/usr/bin/npm start
 Restart=always
 KillMode=process
 
