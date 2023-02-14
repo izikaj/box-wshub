@@ -34,7 +34,7 @@ app.post('/', jsonParser, function (req, res) {
 });
 
 setInterval(function () {
-  sentToAll({ ping: true });
+  sentToAll({ type: 'ping' });
 }, 15000);
 
 app.listen(PORT, () => {

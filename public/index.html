@@ -9,6 +9,20 @@
   </head>
   <body>
     <h1>Messages:</h1>
+    <div class="row filters">
+      <div class="line">
+        <input id="drop_conn" type="checkbox" name="connected">
+        <label for="drop_conn">Skip connected</label>
+      </div>
+      <div class="line">
+        <input id="drop_stat" type="checkbox" name="stat" checked>
+        <label for="drop_stat">Skip stat</label>
+      </div>
+      <div class="line">
+        <input id="drop_ping" type="checkbox" name="ping" checked>
+        <label for="drop_ping">Skip ping</label>
+      </div>
+    </div>
     <section id="list"></section>
     <script src="application.js" defer></script>
   </body>
