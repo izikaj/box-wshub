@@ -12,20 +12,41 @@ const expressWs = require('express-ws')(app);
 const jsonParser = require('body-parser').json();
 
 // allow to serve static only for dev
-if (IS_DEV) app.use(express.static('public'));
+console.log('IS_DEV', IS_DEV);
+if (IS_DEV) {
+  app.use(express.static('public'));
+}
+
+const CHANS = {};
+const arrayWrap = (value) => Array.isArray(value) ? value : (value == undefined ? undefined : [value]);
+const isAllowed = (type, only, except) => {
+  if (except && except.includes(type)) return false;
+  if (only && !only.includes(type)) return false;
+
+  return true;
+}
+
+const filteredChans = (type) => Object.values(CHANS).filter(
+  ({ only, except }) => isAllowed(type, only, except)
+);
 
 app.ws('/', function (ws, req) {
-  const UID = Math.random().toString(36).slice(2, 12);
-  ws.UID = UID;
-  ws.send(JSON.stringify({ type: 'connected', id: UID }));
-  // console.log('<<< WS CONNECTED', UID);
+  const uid = Math.random().toString(36).slice(2, 12);
+  ws.uid = uid;
+  const only = arrayWrap(req.query.only);
+  const except = arrayWrap(req.query.except);
+  CHANS[uid] = { uid, ws, only, except };
+  const type = 'connected';
+  if (isAllowed(type, only, except)) ws.send(JSON.stringify({ type, uid }));
   // ws.on('message', function (msg) { console.log('<<< WS MESSAGE', msg) });
-  // ws.on('close', function () { console.log('<<< WS CLOSE', UID) });
+  ws.on('close', function () { delete CHANS[uid] });
 });
-const wsq = expressWs.getWss('/');
+
 const sentToAll = (message) => {
-  if (typeof message !== 'string') message = JSON.stringify(message);
-  wsq.clients.forEach(function (client) { client.send(message) });
+  const packet = JSON.stringify(message);
+
+  console.log('sentToAll', message.type, filteredChans(message.type).length, filteredChans(message.type).map(i => i.uid));
+  filteredChans(message.type).forEach(({ ws }) => ws.send(packet));
 }
 
 app.post('/', jsonParser, function (req, res) {
