@@ -3,17 +3,18 @@
 //
 const IS_DEV = process.env['NODE_ENV'] !== 'production';
 const PORT = 8988;
-const HOSTS = ['box.local'];
+const PING_INTERVAL = 15000;
 //
 
 const express = require('express');
-const app = express();
-const expressWs = require('express-ws')(app);
 const jsonParser = require('body-parser').json();
 
+const app = express();
+require('express-ws')(app);
+
 // allow to serve static only for dev
-console.log('IS_DEV', IS_DEV);
 if (IS_DEV) {
+  console.log('Development mode: enabling static server...');
   app.use(express.static('public'));
 }
 
@@ -32,20 +33,19 @@ const filteredChans = (type) => Object.values(CHANS).filter(
 
 app.ws('/', function (ws, req) {
   const uid = Math.random().toString(36).slice(2, 12);
-  ws.uid = uid;
   const only = arrayWrap(req.query.only);
   const except = arrayWrap(req.query.except);
-  CHANS[uid] = { uid, ws, only, except };
   const type = 'connected';
+
+  ws.uid = uid;
+  CHANS[uid] = { uid, ws, only, except };
   if (isAllowed(type, only, except)) ws.send(JSON.stringify({ type, uid }));
-  // ws.on('message', function (msg) { console.log('<<< WS MESSAGE', msg) });
+
   ws.on('close', function () { delete CHANS[uid] });
 });
 
 const sentToAll = (message) => {
   const packet = JSON.stringify(message);
-
-  console.log('sentToAll', message.type, filteredChans(message.type).length, filteredChans(message.type).map(i => i.uid));
   filteredChans(message.type).forEach(({ ws }) => ws.send(packet));
 }
 
@@ -54,10 +54,6 @@ app.post('/', jsonParser, function (req, res) {
   res.send({ ok: true });
 });
 
-setInterval(function () {
-  sentToAll({ type: 'ping' });
-}, 15000);
+setInterval(() => sentToAll({ type: 'ping' }), PING_INTERVAL);
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}`)
-});
+app.listen(PORT, () => console.log(`WShub app listening on port ${PORT}`));
