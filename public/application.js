@@ -49,7 +49,7 @@ function connect(app = undefined) {
 
 if (node) {
   connect();
-  connect('alt');
+  connect('manga');
 }
 
 window.$$appsConn = $$appsConn;

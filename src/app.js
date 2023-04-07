@@ -24,7 +24,7 @@ const isAllowed = (type, only, except) => !((except && except.includes(type)) ||
 const isForApp = (self, app) => self === app;
 
 const filteredChans = (type, app) => Object.values(CHANS).filter(
-  ({ only, except, app: self }) => isForApp(self, app) && isAllowed(type, only, except)
+  ({ only, except, app: self }) => ((app === null) || isForApp(self, app)) && isAllowed(type, only, except)
 );
 
 const onWsConnected = (ws, req, app = undefined) => {
@@ -63,6 +63,6 @@ app.post('/:app', jsonParser, function (req, res) {
   res.send({ ok: true });
 });
 
-setInterval(() => sentToAll({ type: 'ping' }), PING_INTERVAL);
+setInterval(() => sentToAll({ type: 'ping' }, null), PING_INTERVAL);
 
 app.listen(PORT, () => console.log(`WShub app listening on port ${PORT}`));
