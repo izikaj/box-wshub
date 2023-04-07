@@ -17,7 +17,7 @@ function $$error(error) {
 }
 
 function connect() {
-  const socket = new WebSocket(`ws://${location.host}${location.pathname}?except=stat`);
+  const socket = new WebSocket(`ws://${location.host}${location.pathname}`);
   socket.onopen = $$open;
   socket.onmessage = (event) => {
     try {

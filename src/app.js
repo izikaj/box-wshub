@@ -3,7 +3,7 @@
 //
 const IS_DEV = process.env['NODE_ENV'] !== 'production';
 const PORT = 8988;
-const PING_INTERVAL = 15000;
+const PING_INTERVAL = 30000;
 //
 
 const express = require('express');
